@@ -1,0 +1,61 @@
+local player = game:GetService("Players").LocalPlayer
+local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui")
+local backpack = player:FindFirstChild("Backpack") or player:WaitForChild("Backpack")
+
+-- Create GUI
+local gui = Instance.new("ScreenGui", playerGui)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Text = "Shadow Scripting Pet Spawner"
+title.TextSize = 24
+title.Font = Enum.Font.SourceSansBold
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextWrapped = true
+title.TextScaled = true
+title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- TextBox
+local textBox = Instance.new("TextBox", frame)
+textBox.Size = UDim2.new(1, 0, 0, 50)
+textBox.Position = UDim2.new(0, 0, 0, 50)
+textBox.PlaceholderText = "Enter your pet name..."
+textBox.TextSize = 18
+textBox.Font = Enum.Font.SourceSans
+textBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+textBox.TextColor3 = Color3.new(1, 1, 1)
+textBox.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Spawn Button
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(0, 100, 0, 30)
+button.Position = UDim2.new(0.5, -50, 1, -40)
+button.Text = "Spawn Pet"
+button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+button.TextColor3 = Color3.new(1, 1, 1)
+
+-- Function to Create Fake Pet
+local function createFakePet(petName)
+    local pet = Instance.new("Tool") -- Tool acts as a pet in inventory
+    pet.Name = petName
+    pet.RequiresHandle = false
+    pet.Parent = backpack -- Adds to inventory
+    print("Fake pet added to inventory:", petName)
+end
+
+-- Button Click
+button.MouseButton1Click:Connect(function()
+    local petName = textBox.Text
+    if petName and petName ~= "" then
+        createFakePet(petName)
+    else
+        warn("No pet name entered!")
+    end
+end)
