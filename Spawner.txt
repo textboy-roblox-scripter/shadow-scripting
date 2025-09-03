@@ -396,7 +396,7 @@ until Confirmed
 local Window =
     WindUI:CreateWindow(
     {
-        Title = "Wisfloal Spawner Hub | Made by Susmanno",
+        Title = "paradisehub| discord.gg/growaparadise",
         Icon = "sparkles",
         IconThemed = true,
         Author = "Grow A Garden",
@@ -417,7 +417,7 @@ local Window =
 
 Window:EditOpenButton(
     {
-        Title = "Open Spawner",
+        Title = "Open paradise hub",
         Icon = "sparkles",
         CornerRadius = UDim.new(0, 12),
         StrokeThickness = 2,
@@ -442,7 +442,7 @@ do
     Tabs.ESPSection =
         Window:Section(
         {
-            Title = "Egg ESP Tools",
+            Title = "soon",
             Icon = "eye",
             Opened = false
         }
@@ -452,7 +452,7 @@ do
     Tabs.TradeScamSection =
         Window:Section(
         {
-            Title = "Trade Scam",
+            Title = "Soon",
             Icon = "shield-alert",
             Opened = false
         }
