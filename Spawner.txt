@@ -1,5 +1,5 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
-local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/textboy-roblox-scripter/shadow-scripting/refs/heads/main/Dark"))()
 
 function gradient(text, startColor, endColor)
     local result = ""
