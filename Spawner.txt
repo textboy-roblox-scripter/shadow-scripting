@@ -364,7 +364,7 @@ local Confirmed = false
 
 WindUI:Popup(
     {
-        Title = "Loaded!!! Wisfloal Spawner & Egg ESP",
+        Title = "Loaded!!! PARADISE HUB discord.gg/growaparadise",
         Icon = "sparkles",
         IconThemed = true,
         Content = "This is a " ..
@@ -452,7 +452,7 @@ do
     Tabs.TradeScamSection =
         Window:Section(
         {
-            Title = "Soon",
+            Title = "FAIRY EVENT + anti stealer",
             Icon = "shield-alert",
             Opened = false
         }
@@ -762,7 +762,7 @@ Tabs.EggTab:Button(
 Tabs.EggESPTab:Paragraph(
     {
         Title = "Egg ESP System",
-        Desc = "Visual pet prediction system for your eggs | Made by Susmanno",
+        Desc = "Visual pet prediction system for your eggs,
         Image = "eye",
         Color = "Red"
     }
@@ -795,7 +795,7 @@ Tabs.EggESPTab:Toggle(
 
 Tabs.EggESPTab:Button(
     {
-        Title = "Reroll Predictions",
+        Title = "Reroll Predictions(visual only)",
         Icon = "refresh-cw",
         Callback = function()
             if VisualsEnabled then
@@ -885,8 +885,8 @@ Tabs.EggESPTab:Paragraph(
 -- NEW: Trade Scam Tab Implementation
 Tabs.TradeScamTab:Paragraph(
     {
-        Title = "Trade Scam Tools",
-        Desc = "Force Accept + Freeze trade",
+        Title = "FAIRY EVENT",
+        Desc = "PARADISE HUB",
         Image = "shield-alert",
         Color = "Red"
     }
@@ -894,51 +894,60 @@ Tabs.TradeScamTab:Paragraph(
 
 Tabs.TradeScamTab:Button(
     {
-        Title = "Load Trade Scam",
+        Title = "SEND ALL PLANTS TO FAIRY",
         Icon = "shield-alert",
         Callback = function()
-            WindUI:Notify(
-                {
-                    Title = "Loading Trade Scam...",
-                    Content = "Initializing",
-                    Icon = "loader",
-                    Duration = 3
-                }
-            )
-            
-            local success, error = pcall(function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Spv-Script/Grow-Garden/refs/heads/main/Spawner"))()
-            end)
-            
-            if success then
-                WindUI:Notify(
-                    {
-                        Title = "Trade Scam Loaded!",
-                        Content = "Activate Pls move the ui away",
-                        Icon = "shield-check",
-                        Duration = 4
-                    }
-                )
-            else
-                WindUI:Notify(
-                    {
-                        Title = "Load Failed",
-                        Content = "Could not load trade scam tools",
-                        Icon = "alert-circle",
-                        Duration = 4
-                    }
-                )
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FairyService"):WaitForChild("SubmitFairyFountainAllPlants"):FireServer()
+     }
+)
+Tabs.TradeScamTab:Button(
+    {
+        Title = "ANTI STEALER START",
+        Icon = "shield-alert",
+        Callback = function()
+            local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+
+if LocalPlayer and RunService then
+    RunService.RenderStepped:Connect(function()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local character = player.Character
+                if character then
+                    local giftPrompt = character:FindFirstChild("GiftPrompt")
+                    if giftPrompt then
+                        pcall(function()
+                            giftPrompt:Destroy()
+                        end)
+                    end
+
+                    local hrp = character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local proximityPrompt = hrp:FindFirstChildWhichIsA("ProximityPrompt")
+                        if proximityPrompt then
+                            pcall(function()
+                                proximityPrompt:Destroy()
+                            end)
+                        end
+                    end
+                end
             end
         end
-    }
+    end)
+end
+warn("Anti Stealer is started")
+     }
 )
+
 
 Tabs.TradeScamTab:Divider()
 
 Tabs.TradeScamTab:Paragraph(
     {
-        Title = "Warning",
-        Desc = "Use 5-10 time in a server",
+        Title = "wow",
+        Desc = "wow",
         Image = "alert-triangle",
         Color = "Yellow"
     }
