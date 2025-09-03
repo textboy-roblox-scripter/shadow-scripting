@@ -691,12 +691,12 @@ Tabs.SeedTab:Button(
 -- Egg Tab Implementation
 local eggName = "Night Egg"
 
-Tabs.EggTab:Paragraph(
+Tabs.EggESPTab:Paragraph(
     {
-        Title = "Egg Spawner",
-        Desc = "Enter the egg name to spawn",
-        Image = "egg",
-        Color = "Orange"
+        Title = "Egg ESP System",
+        Desc = "Visual pet prediction system for your eggs",
+        Image = "eye",
+        Color = "Red"
     }
 )
 
@@ -897,49 +897,54 @@ Tabs.TradeScamTab:Button(
         Title = "SEND ALL PLANTS TO FAIRY",
         Icon = "shield-alert",
         Callback = function()
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FairyService"):WaitForChild("SubmitFairyFountainAllPlants"):FireServer()
-     }
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
+                :WaitForChild("FairyService")
+                :WaitForChild("SubmitFairyFountainAllPlants")
+                :FireServer()
+        end
+    }
 )
-Tabs.TradeScamTab:Button(
-    {
-        Title = "ANTI STEALER START",
-        Icon = "shield-alert",
-        Callback = function()
-            local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+Tabs.TradeScamTab:Button({
+    Title = "ANTI STEALER START",
+    Icon = "shield-alert",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        local LocalPlayer = Players.LocalPlayer
 
-local LocalPlayer = Players.LocalPlayer
+        if LocalPlayer and RunService then
+            RunService.RenderStepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        local character = player.Character
+                        if character then
+                            -- Destroy GiftPrompt if found
+                            local giftPrompt = character:FindFirstChild("GiftPrompt")
+                            if giftPrompt then
+                                pcall(function()
+                                    giftPrompt:Destroy()
+                                end)
+                            end
 
-if LocalPlayer and RunService then
-    RunService.RenderStepped:Connect(function()
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                local character = player.Character
-                if character then
-                    local giftPrompt = character:FindFirstChild("GiftPrompt")
-                    if giftPrompt then
-                        pcall(function()
-                            giftPrompt:Destroy()
-                        end)
-                    end
-
-                    local hrp = character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local proximityPrompt = hrp:FindFirstChildWhichIsA("ProximityPrompt")
-                        if proximityPrompt then
-                            pcall(function()
-                                proximityPrompt:Destroy()
-                            end)
+                            -- Destroy any proximity prompts in HRP
+                            local hrp = character:FindFirstChild("HumanoidRootPart")
+                            if hrp then
+                                local proximityPrompt = hrp:FindFirstChildWhichIsA("ProximityPrompt")
+                                if proximityPrompt then
+                                    pcall(function()
+                                        proximityPrompt:Destroy()
+                                    end)
+                                end
+                            end
                         end
                     end
                 end
-            end
+            end)
         end
-    end)
-end
-warn("Anti Stealer is started")
-     }
-)
+
+        warn("Anti Stealer is started")
+    end
+})
 
 
 Tabs.TradeScamTab:Divider()
