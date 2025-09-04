@@ -762,7 +762,7 @@ Tabs.EggTab:Button(
 Tabs.EggESPTab:Paragraph(
     {
         Title = "Egg ESP System",
-        Desc = "Visual pet prediction system for your eggs,
+        Desc = "Visual pet prediction system for your eggs",
         Image = "eye",
         Color = "Red"
     }
@@ -1112,7 +1112,7 @@ Tabs.UITab:Divider()
 Tabs.UITab:Paragraph(
     {
         Title = "Credits",
-        Desc = "Susmanno",
+        Desc = "NothingBoyGood",
         Image = "users",
         Color = "Purple"
     }
