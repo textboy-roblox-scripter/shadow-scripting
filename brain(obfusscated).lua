@@ -1,4 +1,6 @@
 -- Full GUI Script with Fixed Player ESP and Brainrot ESP
+-- Drop this as a LocalScript (StarterPlayerScripts or inside a LocalGui context)
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -27,8 +29,8 @@ openButton.TextSize = 14
 openButton.Font = Enum.Font.GothamBold
 openButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 openButton.BorderSizePixel = 0
-openButton.Size = UDim2.new(0, 50, 0, 50)
-openButton.Position = UDim2.new(0.5, -25, 0.5, -25)
+openButton.Size = UDim2.new(0, 70, 0, 30)
+openButton.Position = UDim2.new(0.5, -35, 0.5, -25)
 openButton.Active = true
 openButton.Visible = true
 openButton.Parent = gui
@@ -46,7 +48,7 @@ mainFrame.Active = true
 mainFrame.Parent = gui
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0.05, 0)
 
--- Create Title Bar
+-- Title Bar
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -54,7 +56,6 @@ titleBar.Size = UDim2.new(1, 0, 0, 30)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.Parent = mainFrame
 
--- Create Title Text
 local titleText = Instance.new("TextLabel")
 titleText.Text = "Steal a Brainrot | PARADISE HUB"
 titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -64,8 +65,9 @@ titleText.BackgroundTransparency = 1
 titleText.Size = UDim2.new(1, 0, 1, 0)
 titleText.Parent = titleBar
 
--- Create Close Button
+-- Close Button
 local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.TextSize = 14
@@ -78,14 +80,13 @@ closeButton.Active = true
 closeButton.Parent = titleBar
 Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0.1, 0)
 
--- Create Tab Buttons Frame
+-- Tab Buttons Frame
 local tabButtons = Instance.new("Frame")
 tabButtons.Size = UDim2.new(1, 0, 0, 40)
 tabButtons.Position = UDim2.new(0, 0, 0, 30)
 tabButtons.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 tabButtons.Parent = mainFrame
 
--- Create Tabs Container
 local tabsContainer = Instance.new("Frame")
 tabsContainer.Size = UDim2.new(1, -20, 1, 0)
 tabsContainer.Position = UDim2.new(0, 10, 0, 0)
@@ -99,14 +100,15 @@ local tabFrames = {}
 -- Create Tab Buttons and Frames
 for i, name in ipairs(tabs) do
     local tabButton = Instance.new("TextButton")
+    tabButton.Name = name .. "TabButton"
     tabButton.Text = name
     tabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
     tabButton.TextSize = 14
     tabButton.Font = Enum.Font.GothamBold
     tabButton.BackgroundColor3 = (i == 1) and Color3.fromRGB(70, 70, 70) or Color3.fromRGB(50, 50, 50)
     tabButton.BorderSizePixel = 0
-    tabButton.Size = UDim2.new(0.333, -5, 1, -10)
-    tabButton.Position = UDim2.new((i - 1) / #tabs, 5, 0, 5)
+    tabButton.Size = UDim2.new(1/#tabs, -6, 1, -10)
+    tabButton.Position = UDim2.new((i - 1)/#tabs, 5, 0, 5)
     tabButton.Active = true
     tabButton.Parent = tabsContainer
     Instance.new("UICorner", tabButton).CornerRadius = UDim.new(0, 8)
@@ -128,10 +130,8 @@ end
 for _, btn in ipairs(tabsContainer:GetChildren()) do
     if btn:IsA("TextButton") then
         btn.MouseButton1Click:Connect(function()
-            print("Tab clicked: " .. btn.Text) -- Debug
             for name, frame in pairs(tabFrames) do
                 frame.Visible = (name == btn.Text)
-                print("Setting " .. name .. " frame visibility to: " .. tostring(frame.Visible)) -- Debug
             end
             for _, otherBtn in ipairs(tabsContainer:GetChildren()) do
                 if otherBtn:IsA("TextButton") then
@@ -145,6 +145,7 @@ end
 -- Button Creation Helper Function
 local function createButton(parent, text, posY, callback)
     local btn = Instance.new("TextButton")
+    btn.Name = text -- IMPORTANT: name the button so FindFirstChild("...") works
     btn.Text = text
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.TextSize = 14
@@ -158,19 +159,67 @@ local function createButton(parent, text, posY, callback)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
     if callback then
         btn.MouseButton1Click:Connect(function()
-            print("Button clicked: " .. text) -- Debug
             callback()
         end)
     end
 
-    -- Update CanvasSize of parent ScrollingFrame
-    local canvasHeight = posY + 50
-    if parent.CanvasSize.Y.Offset < canvasHeight then
-        parent.CanvasSize = UDim2.new(0, 0, 0, canvasHeight)
-    end
+    -- Update CanvasSize of parent ScrollingFrame (if it is a ScrollingFrame)
+    pcall(function()
+        if parent:IsA("ScrollingFrame") then
+            local canvasHeight = posY + 60
+            if parent.CanvasSize.Y.Offset < canvasHeight then
+                parent.CanvasSize = UDim2.new(0, 0, 0, canvasHeight)
+            end
+        end
+    end)
 
     return btn
 end
+
+-- Open/Close UI
+openButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+end)
+closeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+end)
+-- Make GUI Draggable
+local dragging, dragInput, dragStart, startPos
+local function update(input)
+    local delta = input.Position - dragStart
+    mainFrame.Position = UDim2.new(
+        startPos.X.Scale, startPos.X.Offset + delta.X,
+        startPos.Y.Scale, startPos.Y.Offset + delta.Y
+    )
+end
+
+titleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+titleBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+-- --- Main features ---
 
 -- Infinite Jump
 local infJump = false
@@ -226,8 +275,8 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Instant Steal (Jump)
-createButton(tabFrames.Main, "Jump", 160, function()
+-- Instant Steal (Jump) - using your approach
+createButton(tabFrames.Main, "instant steal", 160, function()
     local function setup()
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
@@ -261,7 +310,7 @@ createButton(tabFrames.Main, "Jump", 160, function()
     end
 end)
 
--- Anti Ragdoll
+-- Anti Ragdoll (external loader)
 createButton(tabFrames.Main, "Anti Ragdoll", 210, function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/onliengamerop/Steal-gui/refs/heads/main/notficationantiragdoll.txt"))()
@@ -271,15 +320,16 @@ end)
 -- Speed
 local speedEnabled = false
 local speedConnection = nil
-local speed = 40
+local speed = 1000
 
 local function startCustomSpeed()
     local char = player.Character
     if not char then return end
-    local hrp = char:WaitForChild("HumanoidRootPart", 5)
+    local hrp = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not (hrp and hum) then return end
 
+    -- remove old if exists
     for _, v in pairs(hrp:GetChildren()) do
         if v:IsA("BodyVelocity") and v.Name == "SpeedForce" then
             v:Destroy()
@@ -289,12 +339,14 @@ local function startCustomSpeed()
     local bv = Instance.new("BodyVelocity")
     bv.Name = "SpeedForce"
     bv.MaxForce = Vector3.new(1e9, 0, 1e9)
-    bv.Velocity = Vector3.zero
+    bv.Velocity = Vector3.new(0, 0, 0)
     bv.Parent = hrp
 
     speedConnection = RunService.RenderStepped:Connect(function()
-        if not (char and char:FindFirstChild("HumanoidRootPart") and hum and hum.MoveDirection) then return end
-        bv.Velocity = hum.MoveDirection * speed
+        if not (player.Character and player.Character:FindFirstChild("HumanoidRootPart")) then return end
+        local localHum = player.Character:FindFirstChildOfClass("Humanoid")
+        if not localHum then return end
+        bv.Velocity = localHum.MoveDirection * speed
     end)
 
     print("Custom walk speed applied using BodyVelocity.")
@@ -343,24 +395,41 @@ end)
 local activeLockTimeEsp = false
 local lteInstances = {}
 
+local function clearLockESPs()
+    for _, inst in pairs(lteInstances) do
+        if inst and inst.Parent then
+            inst:Destroy()
+        end
+    end
+    lteInstances = {}
+end
+
 local function updateLock()
     if not activeLockTimeEsp then
-        for _, instance in pairs(lteInstances) do
-            if instance then
-                instance:Destroy()
-            end
-        end
-        lteInstances = {}
+        clearLockESPs()
+        return
+    end
+
+    -- ensure workspace.Plots exists
+    if not workspace:FindFirstChild("Plots") then
         return
     end
 
     for _, plot in pairs(workspace.Plots:GetChildren()) do
-        local timeLabel = plot:FindFirstChild("Purchases", true) and 
-            plot.Purchases:FindFirstChild("PlotBlock", true) and
-            plot.Purchases.PlotBlock.Main:FindFirstChild("BillboardGui", true) and
-            plot.Purchases.PlotBlock.Main.BillboardGui:FindFirstChild("RemainingTime", true)
+        -- try to find time label robustly
+        local success, timeLabel = pcall(function()
+            local purchases = plot:FindFirstChild("Purchases", true)
+            if not purchases then return nil end
+            local plotBlock = purchases:FindFirstChild("PlotBlock", true)
+            if not plotBlock then return nil end
+            local main = plotBlock:FindFirstChild("Main")
+            if not main then return nil end
+            local bb = main:FindFirstChildOfClass("BillboardGui")
+            if not bb then return nil end
+            return bb:FindFirstChild("RemainingTime")
+        end)
 
-        if timeLabel and timeLabel:IsA("TextLabel") then
+        if success and timeLabel and timeLabel:IsA("TextLabel") then
             local espName = "LockTimeESP_" .. plot.Name
             local existingBillboard = plot:FindFirstChild(espName)
             local isUnlocked = timeLabel.Text == "0s"
@@ -373,23 +442,20 @@ local function updateLock()
                 billboard.Size = UDim2.new(0, 200, 0, 30)
                 billboard.StudsOffset = Vector3.new(0, 5, 0)
                 billboard.AlwaysOnTop = true
-                billboard.Adornee = plot.Purchases.PlotBlock.Main
-
+                billboard.Adornee = plot -- attach to plot
                 local label = Instance.new("TextLabel")
+                label.Name = "Label"
                 label.Text = displayText
                 label.Size = UDim2.new(1, 0, 1, 0)
                 label.BackgroundTransparency = 1
                 label.TextScaled = true
                 label.TextColor3 = textColor
-                label.TextStrokeColor3 = Color3.new(0, 0, 0)
-                label.TextStrokeTransparency = 0
                 label.Font = Enum.Font.SourceSansBold
                 label.Parent = billboard
-
                 billboard.Parent = plot
                 lteInstances[plot.Name] = billboard
             else
-                local label = existingBillboard:FindFirstChildOfClass("TextLabel")
+                local label = existingBillboard:FindFirstChild("Label")
                 if label then
                     label.Text = displayText
                     label.TextColor3 = textColor
@@ -399,47 +465,55 @@ local function updateLock()
     end
 end
 
-RunService.Heartbeat:Connect(function() -- Changed to Heartbeat for better performance
+RunService.Heartbeat:Connect(function()
     if activeLockTimeEsp then
         pcall(updateLock)
     end
 end)
 
 createButton(tabFrames.Visual, "Lock Base ESP", 10, function()
-    print("Lock Base ESP toggled") -- Debug
     activeLockTimeEsp = not activeLockTimeEsp
-    tabFrames.Visual:FindFirstChild("Lock Base ESP").BackgroundColor3 = activeLockTimeEsp and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    local btn = tabFrames.Visual:FindFirstChild("Lock Base ESP")
+    if btn then
+        btn.BackgroundColor3 = activeLockTimeEsp and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    end
+    if not activeLockTimeEsp then
+        clearLockESPs()
+    end
 end)
 
 -- Player ESP (Fixed)
 local playerESPEnabled = false
-local playerESPConnections = {}
+local playerESPConnections = {} -- stores connections so we can cleanup
+local createdESPS = {} -- map player -> billboard instance (for cleanup)
+
+local function removeESPForPlayer(plr)
+    if not plr then return end
+    local bill = createdESPS[plr]
+    if bill and bill.Parent then
+        bill:Destroy()
+    end
+    createdESPS[plr] = nil
+end
 
 local function createESP(plr)
     if plr == player then return end
-    print("Attempting to create ESP for player: " .. plr.Name) -- Debug
-    local function tryCreateESP()
-        local char = plr.Character
-        if not char then
-            print("No character found for " .. plr.Name) -- Debug
-            return false
-        end
-        local head = char:FindFirstChild("Head")
-        if not head then
-            print("No head found for " .. plr.Name) -- Debug
-            return false
-        end
-        if head:FindFirstChild("ESP") then
-            print("ESP already exists for " .. plr.Name) -- Debug
-            return false
-        end
+    -- don't duplicate
+    if createdESPS[plr] then return end
+
+    local char = plr.Character
+    local head = char and char:FindFirstChild("Head")
+
+    local function spawnESP(targetHead)
+        if not targetHead then return end
+        if targetHead:FindFirstChild("ESP") then return end
 
         local tag = Instance.new("BillboardGui")
         tag.Name = "ESP"
         tag.Size = UDim2.new(0, 100, 0, 30)
         tag.StudsOffset = Vector3.new(0, 2, 0)
         tag.AlwaysOnTop = true
-        tag.Adornee = head
+        tag.Adornee = targetHead
 
         local label = Instance.new("TextLabel")
         label.Size = UDim2.new(1, 0, 1, 0)
@@ -451,38 +525,34 @@ local function createESP(plr)
         label.Font = Enum.Font.SourceSansBold
         label.Parent = tag
 
-        tag.Parent = head
-        print("ESP created for " .. plr.Name) -- Debug
-        return true
+        tag.Parent = targetHead
+        createdESPS[plr] = tag
     end
 
-    if not tryCreateESP() then
-        local charConn
-        charConn = plr.CharacterAdded:Connect(function()
-            task.wait(0.5) -- Small delay to ensure character is fully loaded
-            if playerESPEnabled and tryCreateESP() then
-                charConn:Disconnect()
+    if head then
+        spawnESP(head)
+    else
+        -- wait for character to load, store connection
+        local conn
+        conn = plr.CharacterAdded:Connect(function(char)
+            task.wait(0.4)
+            local newHead = char:FindFirstChild("Head")
+            spawnESP(newHead)
+            if conn then
+                conn:Disconnect()
             end
         end)
-        table.insert(playerESPConnections, charConn)
+        table.insert(playerESPConnections, conn)
     end
 end
 
-local function removeESP()
-    print("Removing all Player ESP") -- Debug
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= player and plr.Character then
-            local head = plr.Character:FindFirstChild("Head")
-            if head and head:FindFirstChild("ESP") then
-                head.ESP:Destroy()
-                print("ESP removed for " .. plr.Name) -- Debug
-            end
-        end
+local function removeAllPlayerESPs()
+    for plr, _ in pairs(createdESPS) do
+        removeESPForPlayer(plr)
     end
 end
 
 local function cleanupESPConnections()
-    print("Cleaning up Player ESP connections") -- Debug
     for _, conn in pairs(playerESPConnections) do
         if conn then
             conn:Disconnect()
@@ -492,34 +562,39 @@ local function cleanupESPConnections()
 end
 
 createButton(tabFrames.Visual, "ESP", 60, function()
-    print("Player ESP toggled: " .. tostring(not playerESPEnabled)) -- Debug
     playerESPEnabled = not playerESPEnabled
-    tabFrames.Visual:FindFirstChild("ESP").BackgroundColor3 = playerESPEnabled and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    local btn = tabFrames.Visual:FindFirstChild("ESP")
+    if btn then
+        btn.BackgroundColor3 = playerESPEnabled and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    end
 
     if playerESPEnabled then
-        print("Enabling Player ESP for all players") -- Debug
+        -- create for all current players
         for _, plr in pairs(Players:GetPlayers()) do
             createESP(plr)
         end
+        -- listen for new players
         local playerAddedConn = Players.PlayerAdded:Connect(function(plr)
-            print("New player joined: " .. plr.Name) -- Debug
             createESP(plr)
         end)
         table.insert(playerESPConnections, playerAddedConn)
     else
         cleanupESPConnections()
-        removeESP()
+        removeAllPlayerESPs()
     end
 end)
 
 -- Brainrot ESP (Fixed)
 local brainrotESPEnabled = false
 local brainrotESPUnloader = nil
+local fallbackBrainrotESPs = {} -- keep track of created fallback billboards
 
 createButton(tabFrames.Visual, "Brainrot ESP", 110, function()
-    print("Brainrot ESP toggled: " .. tostring(not brainrotESPEnabled)) -- Debug
     brainrotESPEnabled = not brainrotESPEnabled
-    tabFrames.Visual:FindFirstChild("Brainrot ESP").BackgroundColor3 = brainrotESPEnabled and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    local btn = tabFrames.Visual:FindFirstChild("Brainrot ESP")
+    if btn then
+        btn.BackgroundColor3 = brainrotESPEnabled and Color3.fromRGB(30, 200, 30) or Color3.fromRGB(60, 60, 60)
+    end
 
     if brainrotESPEnabled then
         local success, result = pcall(function()
@@ -527,46 +602,58 @@ createButton(tabFrames.Visual, "Brainrot ESP", 110, function()
         end)
         if success and typeof(result) == "function" then
             brainrotESPUnloader = result
-            print("Brainrot ESP loaded successfully") -- Debug
+            print("Brainrot ESP loaded successfully")
         else
-            warn("Failed to load Brainrot ESP: " .. (result or "Unknown error")) -- Debug
-            brainrotESPEnabled = false
-            tabFrames.Visual:FindFirstChild("Brainrot ESP").BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            -- Fallback placeholder (optional, can be customized for your game)
-            print("Using fallback Brainrot ESP placeholder")
+            warn("Failed to load Brainrot ESP externally. Using fallback.")
+            -- fallback: create billboards for parts named like "brainrot"
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("BasePart") and obj.Name:lower():find("brainrot") then
-                    local billboard = Instance.new("BillboardGui")
-                    billboard.Name = "BrainrotESP"
-                    billboard.Size = UDim2.new(0, 100, 0, 30)
-                    billboard.StudsOffset = Vector3.new(0, 2, 0)
-                    billboard.AlwaysOnTop = true
-                    billboard.Adornee = obj
+                    if not obj:FindFirstChild("BrainrotESP") then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "BrainrotESP"
+                        billboard.Size = UDim2.new(0, 100, 0, 30)
+                        billboard.StudsOffset = Vector3.new(0, 2, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Adornee = obj
 
-                    local label = Instance.new("TextLabel")
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.BackgroundTransparency = 1
-                    label.Text = "Brainrot"
-                    label.TextColor3 = Color3.new(0, 1, 0)
-                    label.TextScaled = true
-                    label.Parent = billboard
+                        local label = Instance.new("TextLabel")
+                        label.Size = UDim2.new(1, 0, 1, 0)
+                        label.BackgroundTransparency = 1
+                        label.Text = "Brainrot"
+                        label.TextColor3 = Color3.new(0, 1, 0)
+                        label.TextScaled = true
+                        label.Parent = billboard
 
-                    billboard.Parent = obj
+                        billboard.Parent = obj
+                        table.insert(fallbackBrainrotESPs, billboard)
+                    end
                 end
             end
         end
     else
+        -- unload external if present
         if typeof(brainrotESPUnloader) == "function" then
-            pcall(brainrotESPUnloader)
-            print("Brainrot ESP unloaded") -- Debug
+            pcall(function()
+                brainrotESPUnloader()
+            end)
             brainrotESPUnloader = nil
+            print("Brainrot ESP unloaded via unloader.")
         end
-        -- Clean up fallback ESP
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if obj:FindFirstChild("BrainrotESP") then
-                obj.BrainrotESP:Destroy()
+        -- cleanup fallback ESPs
+        for _, b in pairs(fallbackBrainrotESPs) do
+            if b and b.Parent then
+                b:Destroy()
             end
         end
+        fallbackBrainrotESPs = {}
+        -- also remove any BillboardGui named BrainrotESP in workspace descendants
+        for _, obj in pairs(workspace:GetDescendants()) do
+            local child = obj:FindFirstChild("BrainrotESP")
+            if child and child:IsA("BillboardGui") then
+                child:Destroy()
+            end
+        end
+        print("Brainrot ESP cleaned up.")
     end
 end)
 
