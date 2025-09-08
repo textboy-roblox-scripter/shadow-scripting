@@ -442,7 +442,7 @@ do
     Tabs.ESPSection =
         Window:Section(
         {
-            Title = "soon",
+            Title = "Egg Esp",
             Icon = "eye",
             Opened = false
         }
@@ -500,9 +500,9 @@ do
     Tabs.TradeScamTab =
         Tabs.TradeScamSection:Tab(
         {
-            Title = "Trade Tools",
+            Title = "FAIRY EVENT",
             Icon = "shield-alert",
-            Desc = "Advanced trading utilities"
+            Desc = "FAIRY EVENT PLUS ANTI STEALER"
         }
     )
 
